@@ -1,17 +1,13 @@
+# import pytest
+
+
+# @pytest.fixture
+# def url():
+#     return 'url'
+
 import pytest
-from requests.compat import urljoin
+
+from pytest_httpbin.plugin import httpbin_ca_bundle
 
 
-def prepare_url(value):
-    # Issue #1483: Make sure the URL always has a trailing slash
-    httpbin_url = value.url.rstrip('/') + '/'
-
-    def inner(*suffix):
-        return urljoin(httpbin_url, '/'.join(suffix))
-
-    return inner
-
-
-@pytest.fixture
-def httpbin(httpbin):
-    return prepare_url(httpbin)
+pytest.fixture(autouse=True)(httpbin_ca_bundle)

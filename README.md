@@ -9,9 +9,12 @@ pip install sitemapgenerator
 
 
 
+
 -----------------------------------------------------------
 
-### Development Setup
+## Development
+
+### Setup
 
 #### Set up virtualenv
 pyvenv env
@@ -27,4 +30,12 @@ pip install -r requirements.txt
 ```
 pip install -r requirements-to-freeze.txt --upgrade
 pip freeze > requirements.txt
+```
+
+-----------------------------------------------------------
+
+## Tests
+
+```
+py.test
 ```
