@@ -2,6 +2,8 @@ import re
 import requests
 from bs4 import BeautifulSoup
 from time import sleep
+from random import randint
+from numbers import Number
 
 
 class Crawler:
@@ -9,6 +11,7 @@ class Crawler:
     def __init__(self, domain):
         self.set_domain(domain)
         self.links = {}
+        self.headers = {'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10.11; rv:47.0) Gecko/20100101 Firefox/47.0'}
 
     def set_domain(self, domain):
         if not domain:
@@ -25,7 +28,7 @@ class Crawler:
         return {a.get('href'): {"soup": a} for a in soup.find_all('a')}
 
     def request_url(self, url):
-        res = requests.get(url).text
+        res = requests.get(url, headers=self.headers).text
         # set visited flag
         if self.strip_domain(url) in self.links:
             self.links[self.strip_domain(url)]['visited'] = True
@@ -54,14 +57,16 @@ class Crawler:
         links = self.extract_links(text)
         self.merge_links(links, url)
 
-    def run(self, url='', recurse=False, throttle=1):
+    def run(self, url='', recurse=False, throttle=None):
+
         # crawl homepage to start with
+        print('crawling {}'.format(url if url else 'homepage'))
         self.crawl(url)
 
         if recurse is True:
             links_unvisited = self.get_unvisited_links()
             if links_unvisited:
-                sleep(throttle)
+                sleep(throttle if isinstance(throttle, Number) else randint(1,5))
                 return self.run(links_unvisited[0], recurse, throttle)
 
         return self.links
