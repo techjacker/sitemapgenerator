@@ -17,6 +17,9 @@ pip install sitemapgenerator
 ### Setup
 
 #### Set up virtualenv
+```
+pyenv install 3.5.0
+pyenv local 3.5.0
 pyvenv env
 source env/bin/activate
 ```
@@ -37,5 +40,5 @@ pip freeze > requirements.txt
 ## Tests
 
 ```
-py.test
+py.test tests -q
 ```
