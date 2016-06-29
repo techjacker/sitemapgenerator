@@ -1,5 +1,4 @@
 import re
-import pprint
 import requests
 from bs4 import BeautifulSoup
 
@@ -19,24 +18,28 @@ class Crawler:
             self.domain = 'http://' + domain
 
         self.domain = domain
-        print('')
-        print('self.domain')
-        pprint.pprint(self.domain)
-        print('')
 
     def extract_links(self, contents):
         soup = BeautifulSoup(contents, 'html.parser')
         return {a.get('href'): {"soup": a} for a in soup.find_all('a')}
 
     def request_url(self, url):
-        return requests.get(url).text
+        res = requests.get(url).text
+        # set visited flag
+        if self.strip_domain(url) in self.links:
+            self.links[self.strip_domain(url)]['visited'] = True
+        return res
 
-    def merge_links(self, links):
+    def strip_domain(self, url):
+        return re.sub('^' + re.escape(self.domain), '', url)
+
+    def merge_links(self, links, url):
         for k, v in links.items():
             # strip domain on internal links
             if k.startswith(self.domain):
-                k = re.sub('^' + re.escape(self.domain), '', k)
-            if k not in self.links:
+                k = self.strip_domain(k)
+            # add extra links if not homepage and not already in dict
+            if k and k != '/' and k not in self.links:
                 self.links[k] = v
 
     def get_domain_links(self):
@@ -45,14 +48,18 @@ class Crawler:
     def get_unvisited_links(self):
         return [k for k, v in self.get_domain_links().items() if 'visited' not in v]
 
-    def run(self, url='', recurse=False):
+    def crawl(self, url=''):
         text = self.request_url(self.domain + url)
         links = self.extract_links(text)
-        self.merge_links(links)
+        self.merge_links(links, url)
+
+    def run(self, recurse=False, url=''):
+        # crawl homepage to start with
+        self.crawl(url)
 
         if recurse is True:
             links_unvisited = self.get_unvisited_links()
             if links_unvisited:
-                return self.run(links_unvisited[0], recurse)
+                return self.run(recurse, links_unvisited[0])
 
         return self.links
