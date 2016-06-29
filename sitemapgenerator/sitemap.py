@@ -1,6 +1,5 @@
 import os
 from xml.etree.ElementTree import Element, SubElement, tostring
-import pprint
 
 
 class Sitemap:
@@ -35,9 +34,5 @@ class Sitemap:
     def run(self, links):
         xml = self.create_xml(links)
         self.write_to_file(xml)
-        # print('')
-        # print('xml')
-        # pprint.pprint(tostring(xml))
-        # print('')
         if self.quiet is not True:
             print('wrote sitemap to {}'.format(self.filepath))
