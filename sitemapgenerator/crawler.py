@@ -8,8 +8,9 @@ from numbers import Number
 
 class Crawler:
 
-    def __init__(self, domain):
+    def __init__(self, domain, quiet=False):
         self.set_domain(domain)
+        self.quiet = quiet
         self.links = {}
         self.headers = {'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10.11; rv:47.0) Gecko/20100101 Firefox/47.0'}
 
@@ -19,13 +20,17 @@ class Crawler:
 
         if not domain.startswith('http://') and \
                 not domain.startswith('https://'):
-            self.domain = 'http://' + domain
+            domain = 'http://' + domain
 
         self.domain = domain
 
     def extract_links(self, contents):
         soup = BeautifulSoup(contents, 'html.parser')
-        return {a.get('href'): {"soup": a} for a in soup.find_all('a')}
+        return {
+            a.get('href'): {"soup": a}
+            for a in soup.find_all('a')
+            if a.get('href') is not None and not a.get('href').startswith('#')
+        }
 
     def request_url(self, url):
         res = requests.get(url, headers=self.headers).text
@@ -39,18 +44,24 @@ class Crawler:
 
     def merge_links(self, links, url):
         for k, v in links.items():
+
             # strip domain on internal links
-            if k.startswith(self.domain):
+            if k.strip().startswith(self.domain):
                 k = self.strip_domain(k)
+
             # add extra links if not homepage and not already in dict
             if k and k != '/' and k not in self.links:
                 self.links[k] = v
 
     def get_domain_links(self):
-        return {k: v for k, v in self.links.items() if not k.startswith('http')}
+        return {
+            k: v for k, v in self.links.items() if not k.startswith('http')
+        }
 
     def get_unvisited_links(self):
-        return [k for k, v in self.get_domain_links().items() if 'visited' not in v]
+        return [
+            k for k, v in self.get_domain_links().items() if 'visited' not in v
+        ]
 
     def crawl(self, url=''):
         text = self.request_url(self.domain + url)
@@ -59,14 +70,17 @@ class Crawler:
 
     def run(self, url='', recurse=False, throttle=None):
 
-        # crawl homepage to start with
-        print('crawling {}'.format(url if url else 'homepage'))
+        if self.quiet is not True:
+            # crawl homepage to start with
+            print('crawling {}'.format(url if url else 'homepage'))
+
         self.crawl(url)
 
         if recurse is True:
             links_unvisited = self.get_unvisited_links()
             if links_unvisited:
-                sleep(throttle if isinstance(throttle, Number) else randint(1,5))
+                sleep(throttle if isinstance(throttle, Number)
+                      else randint(1, 5))
                 return self.run(links_unvisited[0], recurse, throttle)
 
         return self.links

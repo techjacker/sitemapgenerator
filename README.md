@@ -49,4 +49,7 @@ py.test tests -q
 
 ## TODO
 
+- make class methods static
+- clean up tests (avoid duplicating test fixtures)
 - add concurrency (eventlet/gevent)
+- add progress bar to CLI
