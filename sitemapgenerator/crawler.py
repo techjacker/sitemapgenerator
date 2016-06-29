@@ -79,10 +79,10 @@ class Crawler:
             if k and k != '/' and k not in self.links:
                 self.links[k] = v
 
-    def get_domain_links(self):
+    def get_domain_links(self, all=False):
         return {
             k: v for k, v in self.links.items()
-            if not k.startswith('http') and len(k.split('.')) == 1
+            if not k.startswith('http') and (all or len(k.split('.')) == 1)
         }
 
     def get_unvisited_links(self):
@@ -94,6 +94,9 @@ class Crawler:
         return [
             k for k, v in self.get_domain_links().items() if 'visited' in v
         ]
+
+    def get_domain_links_all(self):
+        return [self.domain + l for l in self.get_domain_links(all=True)]
 
     def crawl(self, url=''):
         text = self.request_url(self.domain + url)
@@ -116,4 +119,5 @@ class Crawler:
 
         if self.quiet is not True:
             print('crawled {} URLs'.format(len(self.get_visited_links()) + 1))
-        return self.links
+
+        return self.get_domain_links_all()

@@ -49,7 +49,9 @@ py.test tests -q
 
 ## TODO
 
-- strip hashes from end of URLs (eg /some/url/#respond)
+- normalize URLs to remove dupes
+	- hashes from end of URLs (eg /some/url/#respond)
+	- tailing slashes on URLs
 - make class methods static
 - clean up tests (avoid duplicating test fixtures)
 - add concurrency (eventlet/gevent)
