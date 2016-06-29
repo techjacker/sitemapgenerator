@@ -8,9 +8,10 @@ from numbers import Number
 
 class Crawler:
 
-    def __init__(self, domain, quiet=False):
+    def __init__(self, domain, quiet=False, throttle_max=3):
         self.set_domain(domain)
         self.quiet = quiet
+        self.throttle_max = throttle_max
         self.links = {}
         self.headers = {'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10.11; rv:47.0) Gecko/20100101 Firefox/47.0'}
 
@@ -80,7 +81,7 @@ class Crawler:
             links_unvisited = self.get_unvisited_links()
             if links_unvisited:
                 sleep(throttle if isinstance(throttle, Number)
-                      else randint(1, 5))
+                      else randint(0, self.throttle_max))
                 return self.run(links_unvisited[0], recurse, throttle)
 
         return self.links
