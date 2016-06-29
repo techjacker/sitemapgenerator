@@ -42,3 +42,11 @@ pip freeze > requirements.txt
 ```
 py.test tests -q
 ```
+
+
+
+-----------------------------------------------------------
+
+## TODO
+
+- add concurrency (eventlet/gevent)

@@ -1,6 +1,7 @@
 import re
 import requests
 from bs4 import BeautifulSoup
+from time import sleep
 
 
 class Crawler:
@@ -53,13 +54,14 @@ class Crawler:
         links = self.extract_links(text)
         self.merge_links(links, url)
 
-    def run(self, recurse=False, url=''):
+    def run(self, url='', recurse=False, throttle=1):
         # crawl homepage to start with
         self.crawl(url)
 
         if recurse is True:
             links_unvisited = self.get_unvisited_links()
             if links_unvisited:
-                return self.run(recurse, links_unvisited[0])
+                sleep(throttle)
+                return self.run(links_unvisited[0], recurse, throttle)
 
         return self.links

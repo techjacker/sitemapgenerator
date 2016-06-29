@@ -25,7 +25,7 @@ from sitemapgenerator.crawler import Crawler
 ])
 def test_run(path, links_all, links_unvisited, httpbin):
     c = Crawler(httpbin.url)
-    links_all = c.run(recurse=False, url=path)
+    links_all = c.run(url=path, recurse=False)
 
     assert links_all.keys() == links_all.keys()
     for k, v in links_all.items():
@@ -58,7 +58,7 @@ def test_run(path, links_all, links_unvisited, httpbin):
 ])
 def test_run_recursion(path, links_all, links_unvisited, httpbin):
     c = Crawler(httpbin.url)
-    links_all = c.run(recurse=True, url=path)
+    links_all = c.run(url=path, recurse=True, throttle=0)
 
     assert links_all.keys() == links_all.keys()
     for k, v in links_all.items():
