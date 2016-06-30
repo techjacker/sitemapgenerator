@@ -25,10 +25,10 @@ from sitemapgenerator.crawler import Crawler
 ])
 def test_run(path, links_all, links_unvisited, httpbin):
     c = Crawler(httpbin.url)
-    links_all = c.run(url=path, recurse=False)
+    c.run(url=path, recurse=False)
 
-    assert links_all.keys() == links_all.keys()
-    for k, v in links_all.items():
+    assert c.links.keys() == links_all.keys()
+    for k, v in c.links.items():
         assert 'soup' in v
         assert 'visited' not in v
 
@@ -58,10 +58,10 @@ def test_run(path, links_all, links_unvisited, httpbin):
 ])
 def test_run_recursion(path, links_all, links_unvisited, httpbin):
     c = Crawler(httpbin.url)
-    links_all = c.run(url=path, recurse=True, throttle=0)
+    c.run(url=path, recurse=True, throttle=0)
 
-    assert links_all.keys() == links_all.keys()
-    for k, v in links_all.items():
+    assert c.links.keys() == links_all.keys()
+    for k, v in c.links.items():
         assert 'soup' in v
         if c.get_unvisited_links():
             assert 'visited' in v
