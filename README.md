@@ -77,7 +77,6 @@ py.test tests -q
 ```
 
 
-
 -----------------------------------------------------------
 
 ## TODO
@@ -85,7 +84,14 @@ py.test tests -q
 - normalize URLs to remove dupes
 	- hashes from end of URLs (eg /some/url/#respond)
 	- tailing slashes on URLs
-- make class methods static
-- clean up tests (avoid duplicating test fixtures)
+- add option to create sitemap of:
+  - external URLs
+  - non HTML URLs on same domain
+- refactor code
+  - make class methods static which can be converted
+  - create single getter method for ```Crawler``` class links and remove extra get_* methods
 - add concurrency (eventlet/gevent)
 - add progress bar to CLI
+- add support for Python 2
+  - add tox tests for different python versions
+

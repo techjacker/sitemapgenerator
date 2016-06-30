@@ -119,5 +119,7 @@ class Crawler:
 
         if self.quiet is not True:
             print('crawled {} URLs'.format(len(self.get_visited_links()) + 1))
+            if self.links_broken:
+                print('found broken {} links'.format(len(self.links_broken)))
 
         return self.get_domain_links_all()
