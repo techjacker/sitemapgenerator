@@ -5,7 +5,7 @@ with open('README.rst') as f:
 
 setup(
     name='sitemapgenerator',
-    version='0.0.1',
+    version='0.1.0',
     description='Create an XML sitemap by crawling a website.',
     long_description=long_description,
     url='https://github.com/techjacker/sitemapgenerator',
