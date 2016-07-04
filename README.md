@@ -81,6 +81,7 @@ py.test tests -q
 
 ## TODO
 
+- add more tests
 - normalize URLs to remove dupes
 	- hashes from end of URLs (eg /some/url/#respond)
 	- tailing slashes on URLs
