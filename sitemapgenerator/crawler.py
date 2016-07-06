@@ -5,7 +5,7 @@ from time import sleep
 from random import randint
 from numbers import Number
 import functools
-import pprint
+# import pprint
 
 
 def handle_requests_failures(func):
@@ -37,7 +37,10 @@ class Crawler:
             isinstance(throttle_max, Number) else 3
         self.links = {}
         self.links_broken = []
-        self.headers = {'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10.11; rv:47.0) Gecko/20100101 Firefox/47.0'}
+        self.headers = {'User-Agent': (
+            'Mozilla/5.0 (Macintosh; Intel Mac OS X 10.11; rv:47.0) '
+            'Gecko/20100101 Firefox/47.0'
+        )}
 
     def set_domain(self, domain):
         if not domain:

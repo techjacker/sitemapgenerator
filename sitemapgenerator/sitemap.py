@@ -26,7 +26,10 @@ class Sitemap:
         root = Element('urlset')
         root.set('xmlns', 'http://www.sitemaps.org/schemas/sitemap/0.9')
         root.set('xmlns:xsi', 'http://www.w3.org/2001/XMLSchema-instance')
-        root.set('xsi:schemaLocation', 'http://www.sitemaps.org/schemas/sitemap/0.9 http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd')
+        root.set('xsi:schemaLocation', (
+            'http://www.sitemaps.org/schemas/sitemap/0.9 '
+            'http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd'
+        ))
         for i, link in enumerate(links):
             self.create_xml_node(root, link)
         return root
