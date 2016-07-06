@@ -43,4 +43,4 @@ def test_run(path, links_all, links_unvisited, httpbin, recurse):
             else:
                 assert 'visited' in v
 
-    assert c.get_unvisited_links().sort() == links_unvisited.sort()
+    assert list(c.unvisited_links).sort() == links_unvisited.sort()

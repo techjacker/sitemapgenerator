@@ -37,9 +37,9 @@ def main():
     if args.file:
         sitemap = Sitemap(args.file, args.quiet)
 
-    links = crawler.run(recurse=True)
+    crawler.run(recurse=True)
     if sitemap:
-        sitemap.run(links)
+        sitemap.run(crawler.domain_links)
 
 if __name__ == '__main__':
     main()

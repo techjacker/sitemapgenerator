@@ -26,6 +26,16 @@ def handle_requests_failures(func):
     return wrapper
 
 
+def has_elements(iter):
+    from itertools import tee
+    iter, any_check = tee(iter)
+    try:
+        any_check.next()
+        return True, iter
+    except StopIteration:
+        return False, iter
+
+
 class Crawler:
 
     def __init__(self, domain, quiet=False, throttle_max=3, limit=10000):
@@ -88,18 +98,20 @@ class Crawler:
             if not k.startswith('http') and (all or len(k.split('.')) == 1)
         }
 
-    def get_unvisited_links(self):
-        return [
-            k for k, v in self.get_domain_links().items() if 'visited' not in v
-        ]
-
     def get_visited_links(self):
         return [
             k for k, v in self.get_domain_links().items() if 'visited' in v
         ]
 
-    def get_domain_links_all(self):
-        return [self.domain + l for l in self.get_domain_links(all=True)]
+    @property
+    def unvisited_links(self):
+        return (
+            k for k, v in self.get_domain_links().items() if 'visited' not in v
+        )
+
+    @property
+    def domain_links(self):
+        return (self.domain + l for l in self.get_domain_links(all=True))
 
     def crawl(self, url=''):
         text = self.request_url(self.domain + url)
@@ -107,22 +119,19 @@ class Crawler:
         self.merge_links(links, url)
 
     def run(self, url='', recurse=False, throttle=None):
-
         if self.quiet is not True:
             print('crawling {}'.format(url if url else 'homepage'))
 
         self.crawl(url)
 
         if recurse is True and len(self.get_visited_links()) < self.limit:
-            links_unvisited = self.get_unvisited_links()
-            if links_unvisited:
+            next_unvisited_link = next(self.unvisited_links, None)
+            if next_unvisited_link:
                 sleep(throttle if isinstance(throttle, Number)
                       else randint(0, self.throttle_max))
-                return self.run(links_unvisited[0], recurse, throttle)
+                return self.run(next_unvisited_link, recurse, throttle)
 
         if self.quiet is not True:
             print('crawled {} URLs'.format(len(self.get_visited_links()) + 1))
             if self.links_broken:
                 print('found broken {} links'.format(len(self.links_broken)))
-
-        return self.get_domain_links_all()
