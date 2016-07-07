@@ -5,7 +5,6 @@ from time import sleep
 from random import randint
 from numbers import Number
 import functools
-# import pprint
 
 
 def handle_requests_failures(func):
@@ -24,16 +23,6 @@ def handle_requests_failures(func):
             self.links_broken.append(kw['url'])
 
     return wrapper
-
-
-def has_elements(iter):
-    from itertools import tee
-    iter, any_check = tee(iter)
-    try:
-        any_check.next()
-        return True, iter
-    except StopIteration:
-        return False, iter
 
 
 class Crawler:
@@ -98,11 +87,6 @@ class Crawler:
             if not k.startswith('http') and (all or len(k.split('.')) == 1)
         }
 
-    def get_visited_links(self):
-        return [
-            k for k, v in self.get_domain_links().items() if 'visited' in v
-        ]
-
     @property
     def unvisited_links(self):
         return (
@@ -114,7 +98,7 @@ class Crawler:
         return (self.domain + l for l in self.get_domain_links(all=True))
 
     def crawl(self, url=''):
-        text = self.request_url(self.domain + url)
+        text = self.request_url(url=self.domain + url)
         links = self.extract_links(text)
         self.merge_links(links, url)
 
@@ -123,15 +107,18 @@ class Crawler:
             print('crawling {}'.format(url if url else 'homepage'))
 
         self.crawl(url)
+        no_visited_links = 1
 
-        if recurse is True and len(self.get_visited_links()) < self.limit:
+        if recurse is True and no_visited_links < self.limit:
             next_unvisited_link = next(self.unvisited_links, None)
-            if next_unvisited_link:
+            while next_unvisited_link:
+                self.crawl(next_unvisited_link)
+                next_unvisited_link = next(self.unvisited_links, None)
+                no_visited_links += 1
                 sleep(throttle if isinstance(throttle, Number)
                       else randint(0, self.throttle_max))
-                return self.run(next_unvisited_link, recurse, throttle)
 
         if self.quiet is not True:
-            print('crawled {} URLs'.format(len(self.get_visited_links()) + 1))
+            print('crawled {} URLs'.format(no_visited_links + 1))
             if self.links_broken:
                 print('found broken {} links'.format(len(self.links_broken)))
