@@ -9,15 +9,13 @@ class Sitemap:
         self.filepath = os.path.join(os.getcwd(), filename)
         self.quiet = quiet
 
-    def validate(self, filename):
+    @staticmethod
+    def validate(filename):
         if not filename:
             raise Exception('need to specify filename to write to')
 
-    def write_to_file(self, xml):
-        with open(self.filepath, 'w') as sitemap:
-            sitemap.write(tostring(xml).decode('utf-8'))
-
-    def create_xml_node(self, root, link):
+    @staticmethod
+    def create_xml_node(root, link):
         url = SubElement(root, 'url')
         loc = SubElement(url, 'loc')
         loc.text = link
@@ -33,6 +31,10 @@ class Sitemap:
         for i, link in enumerate(links):
             self.create_xml_node(root, link)
         return root
+
+    def write_to_file(self, xml):
+        with open(self.filepath, 'w') as sitemap:
+            sitemap.write(tostring(xml).decode('utf-8'))
 
     def run(self, links):
         xml = self.create_xml(links)

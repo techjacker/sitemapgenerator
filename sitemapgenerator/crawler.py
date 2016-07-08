@@ -51,7 +51,8 @@ class Crawler:
 
         self.domain = domain
 
-    def extract_links(self, contents):
+    @staticmethod
+    def extract_links(contents):
         soup = BeautifulSoup(contents, 'html.parser')
         return {
             a.get('href'): {"soup": a}

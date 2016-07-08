@@ -89,7 +89,7 @@ py.test tests -q
   - external URLs
   - non HTML URLs on same domain
 - refactor code
-  - make class methods static which can be converted
+  - create separate data class which crawler inherits from/accesses
   - create single getter method for ```Crawler``` class links and remove extra get_* methods
 - add concurrency (eventlet/gevent)
 - add progress bar to CLI
