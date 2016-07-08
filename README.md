@@ -77,6 +77,19 @@ py.test tests -q
 ```
 
 
+#### Anaconda Settings
+
+Add the following to your project settings
+
+```
+"settings":
+  {
+    "test_virtualenv": "~/path_to_project/env",
+    "test_command": "py.test"
+  }
+```
+
+
 -----------------------------------------------------------
 
 ## TODO
